@@ -1,0 +1,76 @@
+function parseProgram() {
+    program = newProgramASTNode()
+
+    advanceTokens()
+
+    for( currentToken() != EOF_TOKEN) {
+        statement = null
+
+        if(currentToken() == LET_TOKEN) {
+            statement = parseLetStatement()
+        } else if(currentToken() == RETURN_TOKEN) {
+            statement = parseReturnStatement()
+        } else if(currentToken() == IF_TOKEN) {
+            statement = parseIfStatment()
+        }
+
+        if(statment != null) {
+            program.Statements.push(statement)
+        }
+
+        advanceTokens()
+    }
+
+    return program
+}
+
+function parseLetStatement() {
+    advanceTokens()
+
+    identifier = parseIdentifier()
+
+    advanceTokens()
+
+    if(currentToken() != EQual_Token) {
+        parseError("no equal sign!");
+        return null
+    }
+
+    advanceTokens()
+
+    value = parseExpression()
+
+    variableStatement = newVariableStatmentASTNode()
+    variableStatement.identifier = identifier
+    variableStatement.value = value
+    return variableStatement
+}
+
+function parseIdentifier() {
+    identifier = newIdentifierASTNode()
+    identifier.token = currentToken()
+    return identifier
+}
+
+function parseExpression() {
+    if(currentToken() == INTEGER_TOKEN) {
+        if(nextToken() == PLUS_TOKEN) {
+            return parseOperatorExpression()
+        } else if(nextToken() == SEMICOLON_TOKEN) {
+            return parseIntegeralLiteral()
+        }
+    } else if(currentToken() == LEFT_PAREN) {
+        return parseGroupedExpression()
+    }
+    // [...]
+}
+
+function parseOperatorExpression() {
+    operatorExpression = newOperatiorExpression()
+
+    operatorExpression.left = parseIntegeraLiteral()
+    operatorExpression.operator = currentToken()
+    operatorExpression.right = parseExpression
+    
+    return operatorExpression()
+}
